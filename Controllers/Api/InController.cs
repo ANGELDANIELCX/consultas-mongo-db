@@ -28,24 +28,47 @@ public class InController : Controller {
 return Ok(inmueblesAgencia);
     }
 
-    [HttpGet("inmuebles-que-sean-casa-o-departamento")]
-    public IActionResult ListarPorpiedadesAgenciaAgente(){
-        MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
-        var db = client.GetDatabase("Inmuebles");
-        var collection =db.GetCollection<Inmueble>("RentasVentas");
-    }
+   [HttpGet("inmuebles-en-venta-o-renta")]
+public IActionResult InmueblesEnVentaORenta()
+{
+    MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
+    var db = client.GetDatabase("Inmuebles");
+    var collection = db.GetCollection<Inmueble>("RentasVentas");
 
-    [HttpGet("inmuebles-que-sean-casa-o-departamento")]
-    public IActionResult ListarPorpiedadesAgenciaAgente(){
-        MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
-        var db = client.GetDatabase("Inmuebles");
-        var collection =db.GetCollection<Inmueble>("RentasVentas");
-    }
+    var operaciones = new List<string> { "Venta", "Renta" };
+    var filtro = Builders<Inmueble>.Filter.In(x => x.Operacion, operaciones);
+    var resultado = collection.Find(filtro).Limit(5).ToList();
 
-    [HttpGet("inmuebles-que-sean-casa-o-departamento")]
-    public IActionResult ListarPorpiedadesAgenciaAgente(){
-        MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
-        var db = client.GetDatabase("Inmuebles");
-        var collection =db.GetCollection<Inmueble>("RentasVentas");
-    }
+    return Ok(resultado);
+}
+
+
+    [HttpGet("inmuebles-de-agentes")]
+public IActionResult InmueblesDeAgentes()
+{
+    MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
+    var db = client.GetDatabase("Inmuebles");
+    var collection = db.GetCollection<Inmueble>("RentasVentas");
+
+    var agentes = new List<string> { "Ana Torres", "María López" };
+    var filtro = Builders<Inmueble>.Filter.In(x => x.NombreAgente, agentes);
+    var resultado = collection.Find(filtro).Limit(5).ToList();
+
+    return Ok(resultado);
+}
+
+[HttpGet("todas-las-operaciones-venta-renta")]
+public IActionResult TodasLasOperacionesVentaRenta()
+{
+    MongoClient client = new MongoClient(CadenasConexion.MONGO_DB);
+    var db = client.GetDatabase("Inmuebles");
+    var collection = db.GetCollection<Inmueble>("RentasVentas");
+
+    var operaciones = new List<string> { "Venta", "Renta" };
+    var filtro = Builders<Inmueble>.Filter.In(x => x.Operacion, operaciones);
+    var resultado = collection.Find(filtro).ToList();
+
+    return Ok(resultado);
+}
+
 }
